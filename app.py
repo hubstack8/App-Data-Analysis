@@ -548,7 +548,7 @@ def render_category_section(category_name, visualizations):
     tabs = st.tabs(viz_names)
     
     # Render each visualization
-    for tab, (viz_name, config) in zip(tabs, visualizations):
+    for tab_idx, (tab, (viz_name, config)) in enumerate(zip(tabs, visualizations)):
         with tab:
             # Visualization header - use full width
             col1, col2 = st.columns([4, 1])
@@ -562,53 +562,83 @@ def render_category_section(category_name, visualizations):
                     st.error("❌ Not Found")
                     continue
             
-            # Height controls in columns - responsive layout
-            col1, col2, col3, col4, col5 = st.columns(5)
+            # Create unique keys using category, viz index, and viz name
+            safe_viz_name = viz_name.replace(" ", "_").replace("(", "").replace(")", "").replace("-", "_")
+            unique_key_base = f"{category_name}_{tab_idx}_{safe_viz_name}"
             
             # Use session state to track height for each visualization
-            height_key = f"height_{category_name}_{viz_name}"
+            height_key = f"height_{unique_key_base}"
             if height_key not in st.session_state:
                 st.session_state[height_key] = HEIGHT_PRESETS["Standard"]
             
+            # Height controls in columns - responsive layout
+            col1, col2, col3, col4, col5 = st.columns(5)
+            
             with col1:
-                if st.button("🔹 Compact", key=f"compact_{category_name}_{viz_name}", use_container_width=True):
+                if st.button("🔹 Compact", key=f"compact_{unique_key_base}", use_container_width=True):
                     st.session_state[height_key] = HEIGHT_PRESETS["Compact"]
+                    st.rerun()
             
             with col2:
-                if st.button("🔸 Standard", key=f"standard_{category_name}_{viz_name}", use_container_width=True):
+                if st.button("🔸 Standard", key=f"standard_{unique_key_base}", use_container_width=True):
                     st.session_state[height_key] = HEIGHT_PRESETS["Standard"]
+                    st.rerun()
             
             with col3:
-                if st.button("🔶 Large", key=f"large_{category_name}_{viz_name}", use_container_width=True):
+                if st.button("🔶 Large", key=f"large_{unique_key_base}", use_container_width=True):
                     st.session_state[height_key] = HEIGHT_PRESETS["Large"]
+                    st.rerun()
             
             with col4:
-                if st.button("🔷 Full", key=f"full_{category_name}_{viz_name}", use_container_width=True):
+                if st.button("🔷 Full", key=f"full_{unique_key_base}", use_container_width=True):
                     st.session_state[height_key] = HEIGHT_PRESETS["Full"]
+                    st.rerun()
             
             with col5:
                 # Full screen toggle
-                if st.button("🖥️ Max", key=f"max_{category_name}_{viz_name}", use_container_width=True):
+                if st.button("🖥️ Max", key=f"max_{unique_key_base}", use_container_width=True):
                     st.session_state[height_key] = 1800
+                    st.rerun()
+            
+            # Display current height
+            st.caption(f"Current height: {st.session_state[height_key]}px")
             
             # Custom height expander
             with st.expander("⚙️ Advanced Size Settings"):
+                current_height = st.session_state.get(height_key, HEIGHT_PRESETS["Standard"])
                 custom_height = st.slider(
                     "Custom Height (pixels)", 
                     min_value=400, 
                     max_value=2000, 
-                    value=st.session_state[height_key], 
+                    value=current_height, 
                     step=50,
-                    key=f"slider_{category_name}_{viz_name}"
+                    key=f"slider_{unique_key_base}"
                 )
-                if st.button("Apply Custom Size", key=f"apply_{category_name}_{viz_name}"):
+                if st.button("Apply Custom Size", key=f"apply_{unique_key_base}"):
                     st.session_state[height_key] = custom_height
+                    st.rerun()
+                
+                # Quick preset buttons in expander
+                preset_col1, preset_col2, preset_col3 = st.columns(3)
+                with preset_col1:
+                    if st.button("📱 Mobile (600px)", key=f"mobile_{unique_key_base}", use_container_width=True):
+                        st.session_state[height_key] = 600
+                        st.rerun()
+                with preset_col2:
+                    if st.button("💻 Desktop (1200px)", key=f"desktop_{unique_key_base}", use_container_width=True):
+                        st.session_state[height_key] = 1200
+                        st.rerun()
+                with preset_col3:
+                    if st.button("🖥️ Large (1600px)", key=f"xlarge_{unique_key_base}", use_container_width=True):
+                        st.session_state[height_key] = 1600
+                        st.rerun()
             
             # Add some spacing before the visualization
             st.markdown("<br>", unsafe_allow_html=True)
             
             # Render visualization with session state height
-            render_plotly_html_large(config["file_path"], height=st.session_state[height_key])
+            current_height = st.session_state.get(height_key, HEIGHT_PRESETS["Standard"])
+            render_plotly_html_large(config["file_path"], height=current_height)
 
 # =============================================================================
 # MAIN APP LAYOUT
