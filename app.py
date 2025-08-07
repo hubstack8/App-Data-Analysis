@@ -2,38 +2,17 @@ import streamlit as st
 import streamlit.components.v1 as components
 import os
 
-# Streamlit page config for wider layout - IMPORTANT: This must be the FIRST Streamlit command
+# Streamlit page config for wider layout
 st.set_page_config(
-    page_title="Computational Infrastructure Entities Usage Analytics Dashboard", 
-    layout="wide",  # This is crucial for full width
+    page_title="computational infrastructure Entities Usage Analytics Dashboard", 
+    layout="wide",
     page_icon="🖥️",
-    initial_sidebar_state="collapsed"  # Changed to collapsed to give more space
+    initial_sidebar_state="expanded"
 )
 
-# Enhanced CSS for full-width layout and better responsive design
+# Custom CSS for better styling
 st.markdown("""
 <style>
-    /* Force full width container */
-    .main > div {
-        padding-left: 1rem;
-        padding-right: 1rem;
-        max-width: none;
-    }
-    
-    /* Remove default Streamlit padding */
-    .block-container {
-        padding-top: 1rem;
-        padding-bottom: 0rem;
-        padding-left: 1rem;
-        padding-right: 1rem;
-        max-width: none;
-    }
-    
-    /* Ensure tabs use full width */
-    .stTabs > div > div > div > div {
-        width: 100%;
-    }
-    
     /* Main header styling */
     .main-header {
         background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
@@ -43,7 +22,6 @@ st.markdown("""
         text-align: center;
         margin-bottom: 2rem;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        width: 100%;
     }
     
     /* Category headers */
@@ -53,16 +31,14 @@ st.markdown("""
         border-radius: 8px;
         margin: 1rem 0;
         border-left: 4px solid #2a5298;
-        width: 100%;
     }
     
-    /* Tab styling - ensure full width */
+    /* Tab styling */
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
         background-color: #f8f9fa;
         padding: 0.5rem;
         border-radius: 10px;
-        width: 100%;
     }
     
     .stTabs [data-baseweb="tab"] {
@@ -73,7 +49,6 @@ st.markdown("""
         border-radius: 8px;
         border: 1px solid #e0e0e0;
         font-weight: 500;
-        flex-grow: 1;
     }
     
     .stTabs [aria-selected="true"] {
@@ -90,7 +65,6 @@ st.markdown("""
         padding: 0.5rem 1rem;
         font-weight: 500;
         transition: all 0.3s;
-        width: 100%;
     }
     
     .stButton > button:hover {
@@ -134,18 +108,6 @@ st.markdown("""
     /* Hide Streamlit branding */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
-    
-    /* Force iframe containers to be full width */
-    iframe {
-        width: 100% !important;
-        border: none;
-    }
-    
-    /* Ensure columns use full available space */
-    .row-widget.stHorizontal > div {
-        flex: 1;
-        min-width: 0;
-    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -173,6 +135,7 @@ BASE_PATHS = {
     "topic": "EDA_fig/topic_modelling"
 }
 
+
 # Define your visualizations here - Add new ones by simply adding to this dictionary
 VISUALIZATIONS = {
     # Country visualizations
@@ -198,7 +161,7 @@ VISUALIZATIONS = {
         "icon": "📊",
         "category": "paper"
     },
-    "Overall entities distribution": {
+        "Overall entities distribution": {
         "file_path": os.path.join(BASE_PATHS["paper"], "overall_entity_distribution.html"),
         "description": "Overall entities distribution",
         "icon": "📊",
@@ -417,7 +380,7 @@ CATEGORY_CONFIG = {
 # =============================================================================
 
 def render_plotly_html_large(html_path, height=1000):
-    """Load and embed Plotly HTML with full-width responsive design."""
+    """Load and embed Plotly HTML with consistent size."""
     if not os.path.exists(html_path):
         st.error(f"⚠️ Could not find the file: {html_path}")
         return
@@ -426,87 +389,44 @@ def render_plotly_html_large(html_path, height=1000):
         with open(html_path, "r", encoding="utf-8") as f:
             html_content = f.read()
         
-        # Enhanced styling with full-width focus
+        # Enhanced styling with better responsiveness
         wrapped_html = f"""
-        <div style="width:100%; height:{height}px; margin: 0; padding: 0; border: 1px solid #e0e0e0; border-radius: 10px; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden;">
+        <div style="width:100%; height:{height}px; overflow:auto; border: 1px solid #e0e0e0; border-radius: 10px; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
             <style>
                 /* Reset and base styles */
-                * {{ 
-                    box-sizing: border-box; 
-                    margin: 0; 
-                    padding: 0; 
-                }}
+                * {{ box-sizing: border-box; }}
+                body {{ margin: 0; padding: 20px; background: white; }}
                 
-                html, body {{ 
-                    width: 100%; 
-                    height: 100%; 
-                    margin: 0; 
-                    padding: 0; 
-                    background: white; 
-                    overflow: hidden;
-                }}
-                
-                /* Force Plotly container to use full available space */
+                /* Force Plotly container dimensions */
                 .plotly-graph-div {{ 
                     width: 100% !important; 
-                    height: {height-20}px !important;
-                    min-height: {height-20}px !important;
-                    margin: 10px !important;
-                    padding: 0 !important;
+                    height: {height-60}px !important;
+                    min-height: {height-60}px !important;
                 }}
                 
                 /* Ensure proper scaling */
                 .plotly-graph-div > div {{ 
-                    width: calc(100% - 20px) !important;
-                    height: calc(100% - 20px) !important;
-                    margin: 10px !important;
-                }}
-                
-                /* Make sure plots are responsive */
-                .js-plotly-plot {{ 
                     width: 100% !important;
                     height: 100% !important;
-                }}
-                
-                /* Remove any default margins/padding from plot elements */
-                .plot-container {{ 
-                    width: 100% !important;
-                    height: 100% !important;
-                    margin: 0 !important;
-                    padding: 0 !important;
                 }}
             </style>
             {html_content}
             
             <script>
-                // Enhanced resize handling
-                function resizePlots() {{
+                // Force resize after load
+                setTimeout(function() {{
                     if (typeof Plotly !== 'undefined') {{
                         var plots = document.querySelectorAll('.plotly-graph-div');
                         plots.forEach(function(plot) {{
-                            // Force responsive sizing
-                            var update = {{
-                                width: plot.offsetWidth - 20,
-                                height: plot.offsetHeight - 20
-                            }};
-                            Plotly.relayout(plot, update);
                             Plotly.Plots.resize(plot);
                         }});
                     }}
-                }}
-                
-                // Initial resize after load
-                setTimeout(resizePlots, 500);
-                setTimeout(resizePlots, 1000);
-                
-                // Resize on window resize
-                window.addEventListener('resize', resizePlots);
+                }}, 500);
             </script>
         </div>
         """
         
-        # Use full width for the component
-        components.html(wrapped_html, height=height, scrolling=False, width=None)
+        components.html(wrapped_html, height=height, scrolling=True)
         
     except Exception as e:
         st.error(f"❌ Error loading visualization: {str(e)}")
@@ -523,7 +443,7 @@ def get_visualizations_by_category():
     return categories
 
 def render_category_section(category_name, visualizations):
-    """Render a category section with its visualizations using full width."""
+    """Render a category section with its visualizations."""
     # Get category configuration
     cat_config = CATEGORY_CONFIG.get(category_name, {
         "name": category_name.replace("_", " ").title(),
@@ -550,8 +470,8 @@ def render_category_section(category_name, visualizations):
     # Render each visualization
     for tab, (viz_name, config) in zip(tabs, visualizations):
         with tab:
-            # Visualization header - use full width
-            col1, col2 = st.columns([4, 1])
+            # Visualization header
+            col1, col2 = st.columns([3, 1])
             with col1:
                 st.markdown(f"### {config['description']}")
             with col2:
@@ -562,34 +482,26 @@ def render_category_section(category_name, visualizations):
                     st.error("❌ Not Found")
                     continue
             
-            # Height controls in columns - responsive layout
-            col1, col2, col3, col4, col5 = st.columns(5)
+            # Height controls in columns
+            col1, col2, col3, col4 = st.columns(4)
             
-            # Use session state to track height for each visualization
-            height_key = f"height_{category_name}_{viz_name}"
-            if height_key not in st.session_state:
-                st.session_state[height_key] = HEIGHT_PRESETS["Standard"]
+            height = HEIGHT_PRESETS["Standard"]  # Default
             
             with col1:
                 if st.button("🔹 Compact", key=f"compact_{category_name}_{viz_name}", use_container_width=True):
-                    st.session_state[height_key] = HEIGHT_PRESETS["Compact"]
+                    height = HEIGHT_PRESETS["Compact"]
             
             with col2:
                 if st.button("🔸 Standard", key=f"standard_{category_name}_{viz_name}", use_container_width=True):
-                    st.session_state[height_key] = HEIGHT_PRESETS["Standard"]
+                    height = HEIGHT_PRESETS["Standard"]
             
             with col3:
                 if st.button("🔶 Large", key=f"large_{category_name}_{viz_name}", use_container_width=True):
-                    st.session_state[height_key] = HEIGHT_PRESETS["Large"]
+                    height = HEIGHT_PRESETS["Large"]
             
             with col4:
                 if st.button("🔷 Full", key=f"full_{category_name}_{viz_name}", use_container_width=True):
-                    st.session_state[height_key] = HEIGHT_PRESETS["Full"]
-            
-            with col5:
-                # Full screen toggle
-                if st.button("🖥️ Max", key=f"max_{category_name}_{viz_name}", use_container_width=True):
-                    st.session_state[height_key] = 1800
+                    height = HEIGHT_PRESETS["Full"]
             
             # Custom height expander
             with st.expander("⚙️ Advanced Size Settings"):
@@ -597,18 +509,15 @@ def render_category_section(category_name, visualizations):
                     "Custom Height (pixels)", 
                     min_value=400, 
                     max_value=2000, 
-                    value=st.session_state[height_key], 
+                    value=height, 
                     step=50,
                     key=f"slider_{category_name}_{viz_name}"
                 )
                 if st.button("Apply Custom Size", key=f"apply_{category_name}_{viz_name}"):
-                    st.session_state[height_key] = custom_height
+                    height = custom_height
             
-            # Add some spacing before the visualization
-            st.markdown("<br>", unsafe_allow_html=True)
-            
-            # Render visualization with session state height
-            render_plotly_html_large(config["file_path"], height=st.session_state[height_key])
+            # Render visualization
+            render_plotly_html_large(config["file_path"], height=height)
 
 # =============================================================================
 # MAIN APP LAYOUT
@@ -631,7 +540,7 @@ for main_tab, (category_name, visualizations) in zip(main_tabs, categories.items
         render_category_section(category_name, visualizations)
 
 # =============================================================================
-# SIDEBAR - MINIMIZED FOR FULL WIDTH
+# SIDEBAR
 # =============================================================================
 
 with st.sidebar:
@@ -650,22 +559,62 @@ with st.sidebar:
     
     st.progress(working_viz / total_viz if total_viz > 0 else 0)
     
+    # File status by category
+    st.markdown("#### 📁 Status by Category")
+    
+    for category_name, viz_list in categories.items():
+        cat_config = CATEGORY_CONFIG.get(category_name, {"name": category_name, "icon": "📊"})
+        working = sum(1 for _, config in viz_list if os.path.exists(config["file_path"]))
+        total = len(viz_list)
+        
+        st.markdown(f"""
+        **{cat_config['icon']} {cat_config['name']}**  
+        {working}/{total} visualizations active
+        """)
+        
+        if working < total:
+            with st.expander(f"View missing files ({total - working})"):
+                for viz_name, config in viz_list:
+                    if not os.path.exists(config["file_path"]):
+                        st.error(f"❌ {viz_name}")
+    
     # Refresh button
     st.markdown("---")
     if st.button("🔄 Refresh Dashboard", use_container_width=True):
         st.rerun()
     
-    # Toggle for full-screen mode
-    if st.button("🖥️ Toggle Sidebar", use_container_width=True):
-        st.info("Collapse this sidebar for maximum width!")
+    # Help section
+    with st.expander("❓ Help & Instructions"):
+        st.markdown("""
+        **Adding New Visualizations:**
+        
+        1. Add to `VISUALIZATIONS` dictionary
+        2. Specify: file_path, description, icon, category
+        3. Save and refresh the dashboard
+        
+        **File Requirements:**
+        - HTML files with Plotly visualizations
+        - Place in appropriate category folder
+        - Ensure correct file paths
+        
+        **Categories:**
+        - country: Geographic analysis
+        - organization: Organizational data
+        - hardware: Hardware metrics
+        - software: Software analysis
+        - cloud_platform: Cloud services
+        - affiliation: Collaborations
+        - topic: Research topics
+        """)
 
 # Footer
 st.markdown("---")
 st.markdown("""
-<div style='text-align: center; padding: 1rem 0; color: #666; width: 100%;'>
+<div style='text-align: center; padding: 2rem 0; color: #666;'>
     <p style='margin: 0;'>GPU Usage Analytics Dashboard</p>
     <p style='margin: 0.5rem 0 0 0; font-size: 0.9rem; opacity: 0.8;'>
-        Powered by Streamlit • Full-Width Data Visualization Suite
+        Powered by Streamlit • Data Visualization Suite
     </p>
 </div>
 """, unsafe_allow_html=True)
+
