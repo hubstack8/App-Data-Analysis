@@ -411,7 +411,17 @@ CATEGORY_CONFIG = {
     "hardware": {"name": "Hardware Analysis", "icon": "🖥️", "color": "#1abc9c"},
     "affiliation": {"name": "Collaboration Networks", "icon": "🤝", "color": "#34495e"},
     "software": {"name": "Software Ecosystem", "icon": "💻", "color": "#16a085"},
-    "topic": {"name": "Research Topics", "icon": "🔬", "color": "#d35400"}
+    "topic": {
+        "name": "Research Topics",
+        "icon": "🔬",
+        "color": "#d35400",
+        "description": (
+            "For the research topic analysis, we applied Latent Dirichlet Allocation (LDA) "
+            "to a corpus of 85,000 publications. We used the titles and abstracts of the papers "
+            "as input for topic modeling. Prior to applying LDA, we used the Gensim library "
+            "and coherence scores to determine the optimal number of topics."
+        )
+    }
 }
 
 # =============================================================================
