@@ -154,6 +154,8 @@ st.markdown("""
 <div class="main-header">
     <h1 style="margin: 0; font-size: 2.5rem;">🖥️ Computational Infrastructure Entities Usage Analytics Dashboard</h1>
     <p style="margin: 0.5rem 0 0 0; opacity: 0.9; font-size: 1.1rem;">Comprehensive Analysis of Hardware, Software, and Research Trends</p>
+    <p style="margin: 0.5rem 0 0 0; opacity: 0.9; font-size: 1.1rem;">If any figure appears distorted or does not fit well on the screen, users can adjust the display size using predefined options (e.g., Compact, Standard) to improve readability and layout.</p>
+</div>
 </div>
 """, unsafe_allow_html=True)
 
